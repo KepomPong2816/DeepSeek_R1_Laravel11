@@ -29,19 +29,13 @@ class DeepSeekController extends Controller
                 ],
                 'stream' => false,
             ]);
-
-            if ($response->failed()) {
-                return back()->withErrors(['error' => 'Failed to connect to DeepSeek API.']);
-            }
-
             $data = $response->json();
-            $reply = $data['message']['content'] ?? 'No response received.';
-
+            // $reply = $data['message']['content'] ?? 'No response received.';
+            $reply = $data['message']['content'] ?? 'No reply received';
         } catch (\Exception $e) {
-            Log::error('DeepSeek API Error: ' . $e->getMessage());
-            return back()->withErrors(['error' => $e . 'An error occurred while processing your request.']);
+            $reply = 'An error occurred: ' . $e->getMessage();
         }
 
-        return view('chat', ['reply' => $reply, 'user_input' => $userInput]);
+        return response()->json(['reply' => $reply]);
     }
 }
